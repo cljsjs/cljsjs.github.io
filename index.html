@@ -2,22 +2,84 @@
 layout: default
 ---
 
-<div class="home">
+<p>CLJSJS aims to provide an easy way for Clojurescript developers
+to depend on Javascript libraries. It makes this possible by providing
+tooling to package them and use them in your project.</p>
 
-  <h1 class="page-heading">Posts</h1>
+<h2>Packages<span class="heading-note">And how to use them</span></h2>
 
-  <ul class="post-list">
-    {% for post in site.posts %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+<p>Packages are available <a href="https://clojars.org/groups/cljsjs">via Clojars</a>.
+  The version of the packaged library is equal to the jar version on Clojars. If there
+  are different variants of a library, e.g. minified and non-minified Maven classifiers
+  are used to allow selecting the desired one.</p>
 
-        <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h2>
-      </li>
-    {% endfor %}
-  </ul>
+<h4>Using A Package</h4>
 
-  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
+<p>Including a CLJSJS package into your project can work differently
+  depending on what tools you use to compile Clojurescript. In general CLJSJS
+  packages add the library to your classpath at a predictable location.</p>
 
-</div>
+<p>In <strong>lein-cljsbuild</strong> this means you can add the path
+  to the to-be-included Javascript file to your <code>:preamble</code>
+  and the externs for it to <code>:externs</code>. An Example:
+</p>
+
+{% highlight clojure %}
+; ...
+:dependencies [; ...
+               [cljsjs/react "0.11.2"]]
+; ...
+:cljsbuild { :builds
+  [{:source-paths ["src/cljs"}]
+    :compiler {:preamble      ["cljsjs/react/react.inc.js"]
+               :externs       ["cljsjs/react/react.ext.js"]
+               :optimizations :advanced}}}}
+{% endhighlight %}
+
+<p>If you are using <strong>boot-cljs</strong> it will find these
+  files automatically so specifying it as dependency is enough:</p>
+
+{% highlight clojure %}
+(set-env!
+ :source-paths #{"src/cljs"}
+ :dependencies '[[adzerk/boot-cljs "0.0-2371-27"]
+                 [cljsjs/react "0.11.2"]])
+{% endhighlight %}
+
+<h4>Currently Available</h4>
+
+<p>
+  <a href="https://github.com/cljsjs/react">React.js</a>,
+  <a href="https://github.com/cljsjs/react">React.js</a>
+</p>
+
+<!-- <h3>React</h3> -->
+
+<!-- <p>Usage with <a href="https://github.com/emezeske/lein-cljsbuild">lein-cljsbuild</a>:</p> -->
+<!-- <ol> -->
+<!-- <li>Depend on <code>[cljsjs/react "0.12.1"]</code></li> -->
+<!-- <li>Add this to your <code>:preamble</code> option: <code>"cljsjs/includes/react/react.inc.js"</code></li> -->
+<!-- <li>Add this to your <code>:externs</code> option: <code>"cljsjs/includes/react/react.ext.js"</code></li> -->
+<!-- </ol> -->
+
+
+
+<!-- <div class="home"> -->
+
+<!--   <h1 class="page-heading">Posts</h1> -->
+
+<!--   <ul class="post-list"> -->
+<!--     {% for post in site.posts %} -->
+<!--       <li> -->
+<!--         <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span> -->
+
+<!--         <h2> -->
+<!--           <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a> -->
+<!--         </h2> -->
+<!--       </li> -->
+<!--     {% endfor %} -->
+<!--   </ul> -->
+
+<!--   <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p> -->
+
+<!-- </div> -->
