@@ -1,5 +1,6 @@
 ---
 layout: default
+title: Javascript Libraries packaged for Clojurescript
 ---
 
 <!-- <h1>This site is Work in Progress and some information here might not -->
