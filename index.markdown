@@ -37,74 +37,8 @@ There are also [boot tasks][boot-cljsjs-package] to aid the creation of CLJSJS
 artifacts. For an example it might be insightful to look at how `cljsjs/react`
 is [currently being packaed][react-build].
 
-<p>Including a CLJSJS package into your project can work differently
-  depending on what tools you use to compile Clojurescript. In general CLJSJS
-  packages add the library to your classpath at a predictable location.</p>
-
-<p>In <strong>lein-cljsbuild</strong> this means you can add the path
-  to the to-be-included Javascript file to your <code>:preamble</code>
-  and the externs for it to <code>:externs</code>. An Example:
-</p>
-
-{% highlight clojure %}
-; ...
-:dependencies [; ...
-               [cljsjs/react "0.11.2"]]
-; ...
-:cljsbuild { :builds
-  [{:source-paths ["src/cljs"}]
-    :compiler {:preamble      ["cljsjs/react/react.inc.js"]
-               :externs       ["cljsjs/react/react.ext.js"]
-               :optimizations :advanced}}}}
-{% endhighlight %}
-
-<p>If you are using <strong>boot-cljs</strong> it will find these
-  files automatically so specifying it as dependency is enough:</p>
-
-{% highlight clojure %}
-(set-env!
- :source-paths #{"src/cljs"}
- :dependencies '[[adzerk/boot-cljs "0.0-2371-27"]
-                 [cljsjs/react "0.11.2"]])
-{% endhighlight %}
-
-<h4>Currently Available</h4>
-
-<p>
-  <a href="https://github.com/cljsjs/react">React.js</a>,
-  <a href="https://github.com/cljsjs/react">React.js</a>
-</p>
-
-<!-- <h3>React</h3> -->
-
-<!-- <p>Usage with <a href="https://github.com/emezeske/lein-cljsbuild">lein-cljsbuild</a>:</p> -->
-<!-- <ol> -->
-<!-- <li>Depend on <code>[cljsjs/react "0.12.1"]</code></li> -->
-<!-- <li>Add this to your <code>:preamble</code> option: <code>"cljsjs/includes/react/react.inc.js"</code></li> -->
-<!-- <li>Add this to your <code>:externs</code> option: <code>"cljsjs/includes/react/react.ext.js"</code></li> -->
-<!-- </ol> -->
-
-
-
-<!-- <div class="home"> -->
-
-<!--   <h1 class="page-heading">Posts</h1> -->
-
-<!--   <ul class="post-list"> -->
-<!--     {% for post in site.posts %} -->
-<!--       <li> -->
-<!--         <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span> -->
-
-<!--         <h2> -->
-<!--           <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a> -->
-<!--         </h2> -->
-<!--       </li> -->
-<!--     {% endfor %} -->
-<!--   </ul> -->
-
-<!--   <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via rss</a></p> -->
-
-<!-- </div> -->
+Please refer to the documentation of the separate projects in the
+[CLJSJS organization][cljsjs-org] on Github for more. Thanks.
 
 [reagent-template]: https://github.com/reagent-project/reagent-template/blob/master/src/leiningen/new/reagent/resources/templates/index.html#L11-L19
 [chestnut-devmode]: https://github.com/plexus/chestnut/blob/ae3140e76a145aa2275cc9b056d8dbc0a738794c/src/leiningen/new/chestnut/src/clj/chestnut/dev.clj#L10-L15
@@ -112,3 +46,4 @@ is [currently being packaed][react-build].
 [boot-cljsjs]: https://github.com/cljsjs/boot-cljsjs
 [boot-cljsjs-package]: https://github.com/cljsjs/boot-cljsjs/blob/master/src/cljsjs/packaging.clj
 [react-build]: https://github.com/cljsjs/packages/blob/master/react/build.boot
+[cljsjs-org]: https://github.com/cljsjs
