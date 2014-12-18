@@ -3,12 +3,6 @@ layout: default
 title: Javascript Libraries packaged for Clojurescript
 ---
 
-<!-- <h1>This site is Work in Progress and some information here might not -->
-<!--   be correct at all</h1> -->
-<!-- <p>CLJSJS aims to provide an easy way for Clojurescript developers -->
-<!-- to depend on Javascript libraries. It makes this possible by providing -->
-<!-- tooling to package them and use them in your project.</p> -->
-
 ### Why
 
 <p class="tldr"><strong>TLDR</strong> CLJSJS provides Javascript libraries and appropriate extern files.
