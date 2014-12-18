@@ -36,7 +36,7 @@ as filepaths in `lein-cljsbuild` there is no such mechanism for it yet.
 
 There are also [boot tasks][boot-cljsjs-package] to aid the creation of CLJSJS
 artifacts. For an example it might be insightful to look at how `cljsjs/react`
-is [currently being packaed][react-build].
+is [currently being packaged][react-build].
 
 Please refer to the documentation of the separate projects in the
 [CLJSJS organization][cljsjs-org] on Github for more. Thanks.
