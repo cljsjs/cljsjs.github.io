@@ -6,7 +6,7 @@ echo "" > $OUT
 echo "<ul>" >> $OUT
 
 for id in $(cat packages); do
-    version=$(curl -s 0 https://clojars.org/${id}/latest-version.json | jq ".version")
+    version=$(curl -s https://clojars.org/${id}/latest-version.json | jq ".version")
 
     echo "  <li>" >> $OUT
     echo "    <a href=\"https://clojars.org/${id}\">${id}</a>" >> $OUT
