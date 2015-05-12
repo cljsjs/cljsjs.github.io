@@ -20,6 +20,7 @@ cljsjs/jquery-daterange-picker
 cljsjs/jquery-ui
 cljsjs/jsdiff
 cljsjs/leaflet
+cljsjs/medium-editor
 cljsjs/moment
 cljsjs/mui
 cljsjs/mustache
