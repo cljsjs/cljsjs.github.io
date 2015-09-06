@@ -9,7 +9,7 @@ Since ClojureScript 0.0-2727 the `:foreign-libs` option provides an
 excellent way to integrate Javascript into ClojureScript
 applications. CLJSJS provides Javascript libraries and their
 appropriate extern files packaged up with `deps.cljs`. CLJSJS aims to
-concentrate packaging efforts to make everyone's live a little easier.
+concentrate packaging efforts to make everyone's life a little easier.
 
 ### Documentation
 
