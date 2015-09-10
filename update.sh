@@ -11,7 +11,7 @@ for e in $(curl -s https://clojars.org/api/groups/cljsjs | jq -c ".[]"); do
     artifact=$(echo $e | jq -r ".jar_name")
     id="$group/$artifact"
     version=$(echo $e | jq ".latest_version")
-    description=$(echo $e | jq -r ".description")
+    description=$(echo $e | jq -r ".description" | sed 's/&(?!amp;)/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g')
     homepage=$(echo $e | jq -r ".homepage")
     echo "  <li>" >> $OUT
     echo "    <a href=\"https://clojars.org/${id}\">${artifact}</a>" >> $OUT
