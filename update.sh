@@ -5,8 +5,15 @@ OUT=_includes/packages.html
 echo "" > $OUT
 echo "<ul>" >> $OUT
 
+data=$(curl --connect-timeout 5 -s https://clojars.org/api/groups/cljsjs)
+
+if [[ $? != "0" ]]; then
+    echo "ERROR: Clojars is down"
+    exit
+fi
+
 IFS=$'\n'
-for e in $(curl -s https://clojars.org/api/groups/cljsjs | jq -c ".[]"); do
+for e in $(echo $data | jq -c ".[]"); do
     group=$(echo $e | jq -r ".group_name")
     artifact=$(echo $e | jq -r ".jar_name")
     id="$group/$artifact"
