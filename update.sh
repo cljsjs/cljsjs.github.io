@@ -1,16 +1,16 @@
 #!/bin/bash
-
-OUT=_includes/packages.html
-
-echo "" > $OUT
-echo "<ul>" >> $OUT
-
 data=$(curl --connect-timeout 5 -s https://clojars.org/api/groups/cljsjs)
 
 if [[ $? != "0" ]]; then
     echo "ERROR: Clojars is down"
     exit
 fi
+
+OUT=_includes/packages.html
+
+echo "" > $OUT
+echo "<ul>" >> $OUT
+
 
 IFS=$'\n'
 for e in $(echo $data | jq -c ".[]"); do
