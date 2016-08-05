@@ -1487,11 +1487,11 @@
     <a href="https://clojars.org/cljsjs/phaser">phaser</a>
     <a href="http://phaser.io" target="new"><i class="fa fa-home"></i></a>
     <span class="clojars">
-      <input type="text" value='[cljsjs/phaser "2.4.2-0"]'/>
-      <button data-clipboard-text='[cljsjs/phaser "2.4.2-0"]'><i class="fa fa-copy"></i></button>
+      <input type="text" value='[cljsjs/phaser "2.6.1-0"]'/>
+      <button data-clipboard-text='[cljsjs/phaser "2.6.1-0"]'><i class="fa fa-copy"></i></button>
     </span>
     <p class="description">Phaser is a fast, free, and fun open source framework for Canvas and WebGL powered browser games.</p>
-    <pre class="deps">{:externs ["cljsjs/phaser/common/phaser.ext.js"], :foreign-libs [{:file-min "cljsjs/phaser/production/phaser.min.inc.js", :file "cljsjs/phaser/development/phaser.inc.js", :provides ["cljsjs.phaser"]}]}</pre>
+    <pre class="deps">{:foreign-libs [{:file "cljsjs/phaser/development/phaser.inc.js", :provides ["cljsjs.phaser"], :file-min "cljsjs/phaser/production/phaser.min.inc.js"}], :externs ["cljsjs/phaser/common/phaser.ext.js"]}</pre>
   </li>
   <li>
     <a href="https://clojars.org/cljsjs/phoenix">phoenix</a>
@@ -1512,6 +1512,27 @@
     </span>
     <p class="description">JavaScript image gallery for mobile and desktop, modular, framework independent</p>
     <pre class="deps">{:foreign-libs [{:file "cljsjs/photoswipe/development/photoswipe.inc.js", :provides ["cljsjs.photoswipe"], :file-min "cljsjs/photoswipe/production/photoswipe.min.inc.js"} {:file "cljsjs/photoswipe/development/photoswipe-ui-default.inc.js", :file-min "cljsjs/photoswipe/production/photoswipe-ui-default.min.js", :require ["cljsjs.photoswipe"], :provides ["cljsjs.photoswipe-ui-default"]}], :externs ["cljsjs/photoswipe/common/photoswipe.ext.js"]}</pre>
+  </li>
+  <li>
+    <a href="https://clojars.org/cljsjs/pickadate">pickadate</a>
+    <a href="https://github.com/amsul/pickadate.js" target="new"><i class="fa fa-home"></i></a>
+    <span class="clojars">
+      <input type="text" value='[cljsjs/pickadate "3.5.6-1"]'/>
+      <button data-clipboard-text='[cljsjs/pickadate "3.5.6-1"]'><i class="fa fa-copy"></i></button>
+    </span>
+    <p class="description">The mobile-friendly, responsive, and lightweight jQuery date & time input picker</p>
+    <pre class="deps">{:foreign-libs [{:file     "cljsjs/pickadate/development/picker.inc.js"
+                 :file-min "cljsjs/pickadate/production/picker.min.inc.js"
+                 :provides ["cljsjs.pickadate"]}
+                {:file     "cljsjs/pickadate/development/picker.date.inc.js"
+                 :file-min "cljsjs/pickadate/production/picker.date.min.inc.js"
+                 :requires ["cljsjs.pickadate"]
+                 :provides ["cljsjs.pickadate.date"]}
+                {:file     "cljsjs/pickadate/development/picker.time.inc.js"
+                 :file-min "cljsjs/pickadate/production/picker.time.min.inc.js"
+                 :requires ["cljsjs.pickadate"]
+                 :provides ["cljsjs.pickadate.time"]}]
+ :externs      ["cljsjs/pickadate/common/pickadate.ext.js"]}</pre>
   </li>
   <li>
     <a href="https://clojars.org/cljsjs/pikaday">pikaday</a>
@@ -2052,8 +2073,8 @@
     <a href="https://clojars.org/cljsjs/semantic-ui">semantic-ui</a>
     <a href="http://semantic-ui.com" target="new"><i class="fa fa-home"></i></a>
     <span class="clojars">
-      <input type="text" value='[cljsjs/semantic-ui "2.1.8-0"]'/>
-      <button data-clipboard-text='[cljsjs/semantic-ui "2.1.8-0"]'><i class="fa fa-copy"></i></button>
+      <input type="text" value='[cljsjs/semantic-ui "2.2.2-0"]'/>
+      <button data-clipboard-text='[cljsjs/semantic-ui "2.2.2-0"]'><i class="fa fa-copy"></i></button>
     </span>
     <p class="description">Semantic UI jquery behaviors.</p>
     <pre class="deps">{:foreign-libs [{:file "cljsjs/semantic-ui/development/semantic.inc.js", :provides ["cljsjs.semantic-ui"], :requires ["cljsjs.jquery"], :file-min "cljsjs/semantic-ui/production/semantic.min.inc.js"}], :externs ["cljsjs/semantic-ui/common/semantic-ui.ext.js"]}</pre>
@@ -2312,8 +2333,8 @@
     <a href="https://clojars.org/cljsjs/vega-lite">vega-lite</a>
     <a href="https://vega.github.io/vega-lite" target="new"><i class="fa fa-home"></i></a>
     <span class="clojars">
-      <input type="text" value='[cljsjs/vega-lite "1.0.8-0"]'/>
-      <button data-clipboard-text='[cljsjs/vega-lite "1.0.8-0"]'><i class="fa fa-copy"></i></button>
+      <input type="text" value='[cljsjs/vega-lite "1.1.1-0"]'/>
+      <button data-clipboard-text='[cljsjs/vega-lite "1.1.1-0"]'><i class="fa fa-copy"></i></button>
     </span>
     <p class="description">A high-level grammar for visual analysis, built on top of Vega.</p>
     <pre class="deps">{:foreign-libs [{:file "cljsjs/development/vega-lite.inc.js", :provides ["cljsjs.vega-lite"], :requires ["cljsjs.vega"], :file-min "cljsjs/production/vega-lite.min.inc.js"}], :externs ["cljsjs/common/vega-lite.ext.js"]}</pre>
