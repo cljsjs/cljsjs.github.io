@@ -75,7 +75,7 @@
              id (str group_name "/" artifact)
              dependency-vector (str "[" id " \"" version "\"]")]
          [:li
-          {:key id}
+          {:key artifact}
           [:a {:href (str "https://clojars.org/" id)}
            [hi/highlight-string artifact query]]
           " "
