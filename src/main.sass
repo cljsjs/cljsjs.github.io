@@ -1,9 +1,6 @@
----
-# Only the main Sass file needs front matter (the dashes are enough)
----
 @charset "utf-8"
 
-@import "normalize", "skeleton", "syntax-highlighting"
+@import "normalize", "skeleton"
 
 .container
   margin-top: 130px
@@ -20,14 +17,14 @@ h4
 a
   color: #096b8a
 
-#about-cljsjs
+.about-cljsjs
   text-align: right
   padding: 24px 4% 24px 0
   border-right: 1px solid #eee
-  #logo
+  .logo
     margin-bottom: 24px
 
-#what-is-cljsjs
+.what-is-cljsjs
   color: #333
   line-height: 1.4
   padding-top: 24px
@@ -35,7 +32,8 @@ a
     font-weight: 900
     font-size: 4rem
 
-#currently-available
+.currently-available
+  position: relative;
   li
     list-style: none
     clear: both
@@ -58,7 +56,7 @@ a
         font-family: Monospace
         width: 250px
 
-#whats-in-the-box
+.whats-in-the-box
   .heading-note
     color: #999
     font-size: 1.5rem
@@ -69,3 +67,41 @@ a
 
 .tldr
   color: #777
+
+.highlight
+  background: #F0E888
+
+.loading
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+
+.loading:after
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border: 2px solid #6CB636;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  -webkit-animation: ripple 1.5s ease-out infinite;
+  -moz-animation: ripple 1.5s ease-out infinite;
+  -ms-animation: ripple 1.5s ease-out infinite;
+  -o-animation: ripple 1.5s ease-out infinite;
+  animation: ripple 1.5s ease-out infinite;
+
+@keyframes ripple
+  0%
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+  96%
+    width: 100px;
+    height: 100px;
+    opacity: 0;
+  100%
+    width: 100px;
+    height: 100px;
+    opacity: 0;

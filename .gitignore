@@ -1,2 +1,10 @@
-_site
-.sass-cache
+.cljs_rhino_repl
+/target
+pom.xml
+pom.xml.asc
+*.jar
+*.class
+.nrepl-port
+.nrepl-history
+gh-pages
+build

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width initial-scale=1">
+
+    <title>Javascript Libraries packaged for ClojureScript</title>
+    <meta name="description" content="CLJSJS provides an easy way for ClojureScript developers to depend on Javascript libraries.">
+
+    <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="main.css">
+    <link rel="canonical" href="http://cljsjs.github.io">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-3138561-13', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="five columns about-cljsjs">
+          <img src="cljsjs.png">
+        </div>
+        <div class="seven columns what-is-cljsjs">
+          <p class="huge">CLJSJS provides an easy way for ClojureScript developers
+            to depend on Javascript libraries.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="eight columns column offset-by-two whats-in-the-box">
+          <p>
+            Since ClojureScript 0.0-2727 the <code class="highlighter-rouge">:foreign-libs</code> option provides an
+            excellent way to integrate Javascript into ClojureScript
+            applications. CLJSJS provides Javascript libraries and their
+            appropriate extern files packaged up with <code class="highlighter-rouge">deps.cljs</code>. CLJSJS aims to
+            concentrate packaging efforts to make everyone’s life a little easier.
+          </p>
+
+          <h3>Documentation</h3>
+
+          <p>
+            CLJSJS packages are gathered on Github in
+            <a href="https://github.com/cljsjs/packages">cljsjs/packages</a>.  There you can also find usage
+            instructions, request new libraries to be packaged or contribute
+            yourself.
+          </p>
+
+          <p>
+            We use <a href="https://github.com/boot-clj/boot">Boot</a> to make packaging quick and easy but it is not
+            required to make use of CLJSJS packaged Jars.
+          </p>
+
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="eight columns column offset-by-two currently-available" class="row" id="app">
+          <div class="loading"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>

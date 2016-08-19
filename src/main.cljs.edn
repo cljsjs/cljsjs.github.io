@@ -1,0 +1,2 @@
+{:require [frontend.core]
+ :compiler-options {:preloads [devtools.preload]}}
