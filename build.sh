@@ -11,6 +11,8 @@ cd gh-pages
 git pull
 )
 
+rm -rf gh-pages/*
+
 boot build
 cp -r build/* gh-pages
 
