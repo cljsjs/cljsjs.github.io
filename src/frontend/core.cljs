@@ -18,7 +18,7 @@
       (.open "GET" "data.json")
       (.send))))
 
-(def term-match-fn (ac/create-matcher [:jar_name :description]))
+(def term-match-fn (ac/create-matcher [:artifact :description]))
 
 (defn filtered-packages []
   (let [current-packages @packages
@@ -70,14 +70,14 @@
 (defn package-list []
   (let [query @search]
     [:ul
-     (for [{:keys [jar_name description homepage latest_version deps]} @(r/track filtered-packages)]
+     (for [{:keys [artifact description homepage version deps]} @(r/track filtered-packages)]
        (let [group_name "cljsjs"
-             id (str group_name "/" jar_name)
-             dependency-vector (str "[" id " \"" latest_version "\"]")]
+             id (str group_name "/" artifact)
+             dependency-vector (str "[" id " \"" version "\"]")]
          [:li
           {:key id}
           [:a {:href (str "https://clojars.org/" id)}
-           [hi/highlight-string jar_name query]]
+           [hi/highlight-string artifact query]]
           " "
           [:a {:href homepage :target "new"} [:i.fa.fa-home]]
           [:span.clojars

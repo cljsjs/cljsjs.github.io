@@ -23,7 +23,7 @@ for e in $(echo $data | jq -c ".[]"); do
     fi
     deps=$(unzip -p $CACHE/$jarfile deps.cljs | sed 's/"/\\"/g')
 
-    x=$(echo $e | jq -c "del(.latest_release) | del(.group_name) | .deps=\"$deps\"")
+    x=$(echo $e | jq -c ".artifact=.jar_name | .version=.latest_version | del(.latest_release) | del(.latest_version) | del(.jar_name) | del(.group_name) | del(.user) | .deps=\"$deps\"")
 
     # Writing json is hard...
     if [[ $FIRST == "yes" ]]; then
