@@ -79,6 +79,8 @@
           [:a {:href (str "https://clojars.org/" id)}
            [hi/highlight-string artifact query]]
           " "
+          [:a {:href (str "https://github.com/cljsjs/packages/tree/master/" artifact) :target "new"} [:i.fa.fa-book]]
+          " "
           [:a {:href homepage :target "new"} [:i.fa.fa-home]]
           [:span.clojars
            [select-on-click-input dependency-vector]
