@@ -8,7 +8,6 @@
     <title>Javascript Libraries packaged for ClojureScript</title>
     <meta name="description" content="CLJSJS provides an easy way for ClojureScript developers to depend on Javascript libraries.">
 
-    <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="main.css">
     <link rel="canonical" href="http://cljsjs.github.io">
@@ -23,19 +22,23 @@
 
     </script>
   </head>
-  <body>
-    <div class="container">
-      <div class="row">
-        <div class="five columns about-cljsjs">
+  <body class="xxx-debug-grid-16">
+    <div class="mw8 center">
+
+      <!-- HEADING -->
+      <div class="cf mt6 mb5">
+        <div class="fl pr4 br b--black-10">
           <img src="cljsjs.png">
         </div>
-        <div class="seven columns what-is-cljsjs">
-          <p class="huge">CLJSJS provides an easy way for ClojureScript developers
+        <div class="fl w-60 pl4 what-is-cljsjs">
+          <p class="ma0 fw7 f1">CLJSJS provides an easy way for ClojureScript developers
             to depend on Javascript libraries.</p>
         </div>
       </div>
-      <div class="row">
-        <div class="eight columns column offset-by-two whats-in-the-box">
+
+      <!-- DOCUMENTATION / TEXT -->
+      <div class="lh-copy">
+        <div class="mw7 ph4 center">
           <p>
             Since ClojureScript 0.0-2727 the <code class="highlighter-rouge">:foreign-libs</code> option provides an
             excellent way to integrate Javascript into ClojureScript
@@ -48,7 +51,7 @@
 
           <p>
             CLJSJS packages are gathered on Github in
-            <a href="https://github.com/cljsjs/packages">cljsjs/packages</a>.  There you can also find usage
+            <a href="https://github.com/cljsjs/packages">cljsjs/packages</a>. There you can also find usage
             instructions, request new libraries to be packaged or contribute
             yourself.
           </p>
@@ -61,10 +64,9 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="eight columns column offset-by-two currently-available" class="row" id="app">
-          <div class="loading"></div>
-        </div>
+      <!-- APP -->
+      <div class="mw7 ph4 center currently-available" id="app">
+        <div class="loading"></div>
       </div>
     </div>
 
