@@ -3,7 +3,8 @@
             [cljs.reader :as reader]
             [komponentit.autocomplete :as ac]
             [komponentit.highlight :as hi]
-            cljsjs.clipboard))
+            cljsjs.clipboard
+            [cljs.pprint :as pprint]))
 
 (defonce packages (r/atom nil))
 (defonce search (r/atom nil))
@@ -16,7 +17,8 @@
     (doto req
       (.addEventListener "load" (fn []
                                   (reset! packages (mapv (fn [obj]
-                                                           (js->clj obj :keywordize-keys true))
+                                                           (-> obj
+                                                               (js->clj obj :keywordize-keys true)))
                                                          (.-response req)))))
       (.open "GET" "data.json")
       (.send))))
@@ -71,7 +73,7 @@
         show-cljs-edn? (r/atom false)]
     (fn package-render [{:keys [artifact description homepage version deps]} query]
       (let [dependency-vector (dep-vec artifact version)
-            provides (-> deps reader/read-string :foreign-libs first :provides first)]
+            provides (-> deps :foreign-libs first :provides first)]
         [:li.ba.mb3.b--black-20.br1
          {:key artifact}
 
@@ -98,9 +100,8 @@
           [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href (str "https://clojars.org/" cljsjs-group "/" artifact)} "Clojars"]
           [:button.btn-reset.pa3-ns.pv2.ph3.dib.blue {:on-click #(swap! show-cljs-edn? not)} "cljs.edn (advanced)"]]
 
-         ;; TODO try this again with pretty printing
          (when @show-cljs-edn?
-           [:pre.deps.pa3 deps])]))))
+           [:pre.deps.pa3 (with-out-str (pprint/pprint deps))])]))))
 
 (defn package-list []
   (let [query @search]
