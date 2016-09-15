@@ -16,7 +16,7 @@
                   [pandeiro/boot-http     "0.7.3"      :scope "test"]
 
                   ; Frontend
-                  [reagent "0.6.0-SNAPSHOT"]
+                  [reagent "0.6.0"]
                   [metosin/komponentit "0.2.0-SNAPSHOT"]
                   [binaryage/devtools "0.8.1"]
                   [cljsjs/clipboard "1.5.9-0"]])
