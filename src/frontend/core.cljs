@@ -8,8 +8,18 @@
 
 (defonce packages (r/atom nil))
 (defonce search (r/atom nil))
+(defonce package-type-filter (r/atom nil))
 
 (def cljsjs-group "cljsjs")
+
+(defn infer-type [{:keys [deps] :as lib}]
+  (let [{:keys [foreign-libs libs]} deps
+        module-type (some :module-type foreign-libs)]
+    (assoc lib :package-type (cond
+                               module-type :processed-module
+                               foreign-libs :foreign-lib
+                               libs :closure-lib
+                               :else "foo?"))))
 
 (defn load-packages []
   (let [req  (js/XMLHttpRequest.)]
@@ -18,7 +28,10 @@
       (.addEventListener "load" (fn []
                                   (reset! packages (mapv (fn [obj]
                                                            (-> obj
-                                                               (js->clj obj :keywordize-keys true)))
+                                                               (js->clj :keywordize-keys true)
+                                                               (update :deps (fn [deps-str]
+                                                                               (reader/read-string deps-str)))
+                                                               (infer-type)))
                                                          (.-response req)))))
       (.open "GET" "data.json")
       (.send))))
@@ -27,8 +40,15 @@
 
 (defn filtered-packages []
   (let [current-packages @packages
-        query @search]
-    (filter #(ac/query-match? term-match-fn % query) current-packages)))
+        query @search
+        package-type @package-type-filter
+        search-filter (if @search
+                        (filter #(ac/query-match? term-match-fn % query))
+                        identity)
+        type-filter (if-let [x @package-type-filter]
+                      (filter #(= x (:package-type %)))
+                      identity)]
+    (into [] (comp search-filter type-filter) current-packages)))
 
 (defn search-input []
   (let [temp (r/atom @search)
@@ -46,6 +66,37 @@
                                         (js/setTimeout (fn [_]
                                                          (reset! search (ac/default->query v)))
                                                        300)))))}])))
+
+(defn package-types []
+  (let [active (or @package-type-filter :all)
+        cb (fn [v e]
+             (.preventDefault e)
+             (reset! package-type-filter (if (= :all v) nil v)))]
+    [:div
+     [:nav.pa3
+      [:span.mr3 "Package types: "]
+      (for [[k t] [[:all "All"]
+                   [:foreign-lib "Foreign library"]
+                   [:closure-lib "Closure library"]
+                   [:processed-module "CommonJS, ES6, AMDjs"]]]
+        [:a.link.dim.f6.f5-ns.dib.mr3
+         {:key k
+          :href "#"
+          :class (if (= k active) "black b" "gray")
+          :on-click #(cb k %)}
+         t])]
+     (case active
+       :foreign-lib [:p.pa3.pt0 "Foreign libraries are normal JavaScript libraries intended for browser consumption
+                                packaged with extern files so they can be used with Closure optimized ClojureScript
+                                application. The library JavaScript code is included as is as part of the output,
+                                and Closure can't optimize the code (dead code elimination, name mangling)."]
+       :closure-lib [:p.pa3.pt0 "Closure libraries are JavaScript libraries intended for use with Closure compiler.
+                                These libraries can be optimized by Closure compiler, same as Cljs code."]
+       :processed-module [:p.pa3.pt0 "In future Cljs compiler can hopefully use Closure Module Processing to convert
+                                     e.g. CommonJS and ES6 modules to Closure modules. This will allow Closure
+                                     compiler to optimize code and we don't need to use webpack or such to package
+                                     these libraries for browser."]
+       nil)]))
 
 (defn select-on-click-input [_ _]
   (let [copied? (r/atom nil)]
@@ -71,12 +122,13 @@
 (defn package [_]
   (let [expanded?      (r/atom false)
         show-cljs-edn? (r/atom false)]
-    (fn package-render [{:keys [artifact description homepage version deps]} query]
+    (fn package-render [{:keys [artifact description homepage version deps package-type]} query]
       (let [dependency-vector (dep-vec artifact version)
-            provides (-> deps :foreign-libs first :provides first)]
+            provides (mapcat :provides (:foreign-libs deps))
+            main-ns (-> deps :foreign-libs first :provides first)
+            readme-url (str "https://github.com/cljsjs/packages/tree/master/" artifact)]
         [:li.ba.mb3.b--black-20.br1
          {:key artifact}
-
          [:div.pointer.mb2
           [select-on-click-input dependency-vector query]]
 
@@ -89,14 +141,21 @@
          (when @expanded?
            [:div.mt2.pa3.lh-copy.bg-near-white.bt.bb.b--black-20
             [:h4.ma0.mb3 "Using the " [code cljsjs-group "/" artifact] " package"]
-            [:ol
-             [:li "Add the dependency coordinates " [code dependency-vector] " to the list of " [code ":dependencies"] " in your project."]
-             [:li "Make sure to require " [code provides] " somewhere in your project so it is added to your compiled ClojureScript code."]
-             [:li "You can now use your newly added library by accessing it through the global Javascript namespace, please check the project site to find out what global the library uses. Example: " [code "js/React"]]]])
+            (into
+              [:ol
+               [:li "Add the dependency coordinates " [code dependency-vector] " to the list of " [code ":dependencies"] " in your project."]]
+              (case package-type
+                :foreign-lib [[:li "Make sure to require " [code main-ns] " somewhere in your project so it is added to your compiled ClojureScript code."]
+                              (if (seq (rest provides))
+                                [:li "This package also provides " (count (rest provides)) " other namespaces, check "
+                                 [:a.dib.link.normal.blue {:href readme-url :target "new"} "Readme"] " or deps.cljs for more information."])
+                              [:li "You can now use your newly added library by accessing it through the global Javascript namespace,
+                                   please check the project site to find out what global the library uses. Example: " [code "js/React"]]]
+                :closure-lib [[:li "This package is provided as Closure library. Check " [:a.dib.link.normal.blue {:href readme-url} "Readme"] " for usage information."]]))])
 
          [:div.cf.mb0-ns.mb2
           [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href homepage :target "new"} "Project Site"]
-          [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href (str "https://github.com/cljsjs/packages/tree/master/" artifact) :target "new"} "Package Readme"]
+          [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href readme-url :target "new"} "Package Readme"]
           [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href (str "https://clojars.org/" cljsjs-group "/" artifact)} "Clojars"]
           [:button.btn-reset.pa3-ns.pv2.ph3.dib.blue {:on-click #(swap! show-cljs-edn? not)} "cljs.edn (advanced)"]]
 
@@ -113,6 +172,7 @@
   [:div
    [:h3.f2.fw3 "Packages"]
    [search-input]
+   [package-types]
    [package-list]])
 
 (defn init! []
