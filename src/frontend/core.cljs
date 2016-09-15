@@ -45,20 +45,20 @@
                                                          (reset! search (ac/default->query v)))
                                                        300)))))}])))
 
-(defn select-on-click-input [text]
+(defn select-on-click-input [_ _]
   (let [copied? (r/atom nil)]
     (r/create-class
      {:component-did-mount
       (fn [this]
         (js/Clipboard. (r/dom-node this)))
       :reagent-render
-      (fn [text]
+      (fn [text query]
         [:div.dim.pa3.bb.b--black-20
          {:data-clipboard-text text
           :on-click #(reset! copied? true)}
          [:div.mv2
-          [:span.f4.code text]
-          [:span.ml1.f6.black-50 (if @copied? "(copied!)" "(click to copy)")]]])})))
+          [:span.f4.code.mr1 [hi/highlight-string text query]]
+          [:span.dib.pt2.f6.black-50 (if @copied? "(copied!)" "(click to copy)")]]])})))
 
 (defn dep-vec [artifact version]
   (str "[" cljsjs-group "/" artifact " \"" version "\"]"))
@@ -76,11 +76,11 @@
          {:key artifact}
 
          [:div.pointer.mb2
-          [select-on-click-input dependency-vector]]
+          [select-on-click-input dependency-vector query]]
 
          [:p.pa3.ma0.lh-copy
-          [hi/highlight-string description query]
-          [:button.btn-reset.blue
+          [:span.mr2 [hi/highlight-string description query]]
+          [:button.btn-reset.blue.pa0
            {:on-click #(swap! expanded? not)}
            (if @expanded? "Hide Instructions" "Show Usage Instructions »")]]
 
