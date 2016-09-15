@@ -54,7 +54,7 @@
   (let [temp (r/atom @search)
         timeout (atom nil)]
     (fn []
-      [:input.w-100.pa3
+      [:input.w-100.pa3.f4
        {:type "text"
         :placeholder "Search ..."
         :value @temp
