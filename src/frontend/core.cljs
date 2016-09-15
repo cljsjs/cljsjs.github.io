@@ -145,7 +145,12 @@
               [:ol
                [:li "Add the dependency coordinates " [code dependency-vector] " to the list of " [code ":dependencies"] " in your project."]]
               (case package-type
-                :foreign-lib [[:li "Make sure to require " [code main-ns] " somewhere in your project so it is added to your compiled ClojureScript code."]
+                :foreign-lib [[:li "Make sure to require " [code main-ns] " somewhere in your project so it is added to your compiled ClojureScript code."
+                               [code
+                                [:pre
+                                 "(ns some.ns\n"
+                                 "  (:require ...\n"
+                                 "            " main-ns ")"]]]
                               (if (seq (rest provides))
                                 [:li "This package also provides " (count (rest provides)) " other namespaces, check "
                                  [:a.dib.link.normal.blue {:href readme-url :target "new"} "Readme"] " or deps.cljs for more information."])
