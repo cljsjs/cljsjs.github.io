@@ -1,75 +1,16 @@
 @charset "utf-8"
 
-@import "normalize", "skeleton"
+// http://tachyons.io/
+@import "tachyons"
 
-.container
-  margin-top: 130px
-
-h1
-  margin-top: 1em
-h2
-  margin-top: 1em
-h3
-  margin-top: 1em
-h4
-  margin-top: 1em
-
-a
-  color: #096b8a
-
-.about-cljsjs
-  text-align: right
-  padding: 24px 4% 24px 0
-  border-right: 1px solid #eee
-  .logo
-    margin-bottom: 24px
-
-.what-is-cljsjs
-  color: #333
-  line-height: 1.4
-  padding-top: 24px
-  .huge
-    font-weight: 900
-    font-size: 4rem
-
-.currently-available
-  position: relative;
-  li
-    list-style: none
-    clear: both
-    line-height: 38px
-    .description
-      color: #888
-      clear: both
-      line-height: 22px
-      margin-bottom: 0
-    .clojars
-      float: right
-      input, button
-        margin: 0
-        padding: 0px 5px
-        line-height: 1
-        vertical-align: top
-      button
-        width: 60px
-      input
-        font-family: Monospace
-        width: 250px
-
-.whats-in-the-box
-  .heading-note
-    color: #999
-    font-size: 1.5rem
-    margin-left: 1rem
-  .highlight
-    margin-left: -10%
-    margin-right: -10%
-
-.tldr
-  color: #777
-
-.highlight
-  background: #F0E888
+.btn-reset
+  cursor: pointer
+  outline: none
+  border-width: 0
+  background-color: transparent
+  &:disabled
+    cursor: not-allowed
+    opacity: .6
 
 .loading
   width: 100px;

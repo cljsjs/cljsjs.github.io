@@ -1,11 +1,14 @@
 (ns frontend.core
   (:require [reagent.core :as r]
+            [cljs.reader :as reader]
             [komponentit.autocomplete :as ac]
             [komponentit.highlight :as hi]
             cljsjs.clipboard))
 
 (defonce packages (r/atom nil))
 (defonce search (r/atom nil))
+
+(def cljsjs-group "cljsjs")
 
 (defn load-packages []
   (let [req  (js/XMLHttpRequest.)]
@@ -29,10 +32,9 @@
   (let [temp (r/atom @search)
         timeout (atom nil)]
     (fn []
-      [:input
-       {:class "twelve columns"
-        :type "text"
-        :placeholder "Search"
+      [:input.w-100.pa3
+       {:type "text"
+        :placeholder "Search ..."
         :value @temp
         :on-change (fn [e]
                      (let [v (.. e -target -value)]
@@ -44,55 +46,71 @@
                                                        300)))))}])))
 
 (defn select-on-click-input [text]
-  (let [el (atom nil)]
-    (fn [text]
-      [:input
-       {:type "text"
-        :default-value text
-        :ref #(reset! el %)
-        :on-click (fn [_]
-                    (if @el (.select @el)))}])))
+  (let [copied? (r/atom nil)]
+    (r/create-class
+     {:component-did-mount
+      (fn [this]
+        (js/Clipboard. (r/dom-node this)))
+      :reagent-render
+      (fn [text]
+        [:div.dim.pa3.bb.b--black-20
+         {:data-clipboard-text text
+          :on-click #(reset! copied? true)}
+         [:div.mv2
+          [:span.f4.code text]
+          [:span.ml1.f6.black-50 (if @copied? "(copied!)" "(click to copy)")]]])})))
 
-(defn copy-button
-  [_ & _]
-  (r/create-class
-    {:component-did-mount
-     (fn [this]
-       (js/Clipboard. (r/dom-node this)))
-     :reagent-render
-     (fn [{:keys [text]} & children]
-       (into
-         [:button
-          {:type "text"
-           :data-clipboard-text text}]
-         children))}))
+(defn dep-vec [artifact version]
+  (str "[" cljsjs-group "/" artifact " \"" version "\"]"))
+
+(defn code [& contents]
+  (into [:code.blue] contents))
+
+(defn package [_]
+  (let [expanded?      (r/atom false)
+        show-cljs-edn? (r/atom false)]
+    (fn package-render [{:keys [artifact description homepage version deps]} query]
+      (let [dependency-vector (dep-vec artifact version)
+            provides (-> deps reader/read-string :foreign-libs first :provides first)]
+        [:li.ba.mb3.b--black-20.br1
+         {:key artifact}
+
+         [:div.pointer.mb2
+          [select-on-click-input dependency-vector]]
+
+         [:p.pa3.ma0.lh-copy
+          [hi/highlight-string description query]
+          [:button.btn-reset.blue
+           {:on-click #(swap! expanded? not)}
+           (if @expanded? "Hide Instructions" "Show Usage Instructions »")]]
+
+         (when @expanded?
+           [:div.mt2.pa3.lh-copy.bg-near-white.bt.bb.b--black-20
+            [:h4.ma0.mb3 "Using the " [code cljsjs-group "/" artifact] " package"]
+            [:ol
+             [:li "Add the dependency coordinates " [code dependency-vector] " to the list of " [code ":dependencies"] " in your project."]
+             [:li "Make sure to require " [code provides] " somewhere in your project so it is added to your compiled ClojureScript code."]
+             [:li "You can now use your newly added library by accessing it through the global Javascript namepsace, please check the project site to find out what global the library uses."]]])
+
+         [:div.cf.mb0-ns.mb2
+          [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href homepage :target "new"} "Project Site"]
+          [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href (str "https://github.com/cljsjs/packages/tree/master/" artifact) :target "new"} "Package Readme"]
+          [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href (str "https://clojars.org/" cljsjs-group "/" artifact)} "Clojars"]
+          [:button.btn-reset.pa3-ns.pv2.ph3.dib.blue {:on-click #(swap! show-cljs-edn? not)} "cljs.edn (advanced)"]]
+
+         ;; TODO try this again with pretty printing
+         (when @show-cljs-edn?
+           [:pre.deps.pa3 deps])]))))
 
 (defn package-list []
   (let [query @search]
-    [:ul
-     (for [{:keys [artifact description homepage version deps]} @(r/track filtered-packages)]
-       (let [group_name "cljsjs"
-             id (str group_name "/" artifact)
-             dependency-vector (str "[" id " \"" version "\"]")]
-         [:li
-          {:key artifact}
-          [:a {:href (str "https://clojars.org/" id)}
-           [hi/highlight-string artifact query]]
-          " "
-          [:a {:href (str "https://github.com/cljsjs/packages/tree/master/" artifact) :target "new"} [:i.fa.fa-book]]
-          " "
-          [:a {:href homepage :target "new"} [:i.fa.fa-home]]
-          [:span.clojars
-           [select-on-click-input dependency-vector]
-           [copy-button
-            {:text dependency-vector}
-            [:i.fa.fa-copy]]]
-          [:p.description [hi/highlight-string description query]]
-          [:pre.deps deps]]))]))
+    [:ul.list.pl0
+     (for [pkg-info @(r/track filtered-packages)]
+       ^{:key (:artifact pkg-info)} [package pkg-info query])]))
 
 (defn main []
   [:div
-   [:h3 "Packages"]
+   [:h3.f2.fw3 "Packages"]
    [search-input]
    [package-list]])
 
