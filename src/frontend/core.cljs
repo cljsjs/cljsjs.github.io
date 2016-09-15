@@ -90,7 +90,7 @@
             [:ol
              [:li "Add the dependency coordinates " [code dependency-vector] " to the list of " [code ":dependencies"] " in your project."]
              [:li "Make sure to require " [code provides] " somewhere in your project so it is added to your compiled ClojureScript code."]
-             [:li "You can now use your newly added library by accessing it through the global Javascript namepsace, please check the project site to find out what global the library uses."]]])
+             [:li "You can now use your newly added library by accessing it through the global Javascript namespace, please check the project site to find out what global the library uses. Example: " [code "js/React"]]]])
 
          [:div.cf.mb0-ns.mb2
           [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href homepage :target "new"} "Project Site"]
