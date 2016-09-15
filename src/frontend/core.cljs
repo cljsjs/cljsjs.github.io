@@ -72,31 +72,33 @@
         cb (fn [v e]
              (.preventDefault e)
              (reset! package-type-filter (if (= :all v) nil v)))]
-    [:div
-     [:nav.pa3
-      [:span.mr3 "Package types: "]
+    [:div.pa3.br.bl.bb.b--black-20.bg-near-white
+     [:nav
+      [:span.mr2.b.mid-gray "Package types: "]
       (for [[k t] [[:all "All"]
                    [:foreign-lib "Foreign library"]
                    [:closure-lib "Closure library"]
                    [:processed-module "CommonJS, ES6, AMDjs"]]]
-        [:a.link.dim.f6.f5-ns.dib.mr3
+        [:button.btn-reset.f6.f5-ns.dib.mr2
          {:key k
           :href "#"
-          :class (if (= k active) "black b" "gray")
+          :class (if (= k active) "black b" "blue")
           :on-click #(cb k %)}
          t])]
-     (case active
-       :foreign-lib [:p.pa3.pt0 "Foreign libraries are normal JavaScript libraries intended for browser consumption
-                                packaged with extern files so they can be used with Closure optimized ClojureScript
-                                application. The library JavaScript code is included as is as part of the output,
-                                and Closure can't optimize the code (dead code elimination, name mangling)."]
-       :closure-lib [:p.pa3.pt0 "Closure libraries are JavaScript libraries intended for use with Closure compiler.
-                                These libraries can be optimized by Closure compiler, same as Cljs code."]
-       :processed-module [:p.pa3.pt0 "In future Cljs compiler can hopefully use Closure Module Processing to convert
-                                     e.g. CommonJS and ES6 modules to Closure modules. This will allow Closure
-                                     compiler to optimize code and we don't need to use webpack or such to package
-                                     these libraries for browser."]
-       nil)]))
+     (when-not (= :all active)
+       [:p.pt3.ma0.lh-copy
+        (case active
+          :foreign-lib  "Foreign libraries are normal JavaScript libraries intended for browser consumption
+                       packaged with extern files so they can be used with Closure optimized ClojureScript
+                       application. The library JavaScript code is included as is as part of the output,
+                       and Closure can't optimize the code (dead code elimination, name mangling)."
+          :closure-lib "Closure libraries are JavaScript libraries intended for use with Closure compiler.
+                      These libraries can be optimized by Closure compiler, same as Cljs code."
+          :processed-module "In future Cljs compiler can hopefully use Closure Module Processing to convert
+                           e.g. CommonJS and ES6 modules to Closure modules. This will allow Closure
+                           compiler to optimize code and we don't need to use webpack or such to package
+                           these libraries for browser."
+          nil)])]))
 
 (defn select-on-click-input [_ _]
   (let [copied? (r/atom nil)]
@@ -136,7 +138,7 @@
           [:span.mr2 [hi/highlight-string description query]]
           [:button.btn-reset.blue.pa0
            {:on-click #(swap! expanded? not)}
-           (if @expanded? "Hide Instructions" "Show Usage Instructions »")]]
+           (if @expanded? "Hide Instructions ×" "Show Usage Instructions »")]]
 
          (when @expanded?
            [:div.mt2.pa3.lh-copy.bg-near-white.bt.bb.b--black-20
@@ -148,14 +150,14 @@
                 :foreign-lib [[:li "Make sure to require " [code main-ns] " somewhere in your project so it is added to your compiled ClojureScript code."
                                [code
                                 [:pre
-                                 "(ns some.ns\n"
-                                 "  (:require ...\n"
-                                 "            " main-ns "))"]]]
+                                 "(ns your.namespace\n"
+                                 "  (:require [" main-ns "]))"]]]
                               (if (seq (rest provides))
                                 [:li "This package also provides " (count (rest provides)) " other namespaces, check "
                                  [:a.dib.link.normal.blue {:href readme-url :target "new"} "Readme"] " or deps.cljs for more information."])
-                              [:li "You can now use your newly added library by accessing it through the global Javascript namespace,
-                                   please check the project site to find out what global the library uses. Example: " [code "js/React"]]]
+                              [:li "You can now use your newly added library by accessing it through the global Javascript namespace, e.g." [code "js/React"]
+                               "Please check the project's documentation to find out what global the library uses. "
+                               [:strong "Please note: "] "You can not use " [code ":as"] " or " [code ":refer"] " with CLJSJS dependencies."]]
                 :closure-lib [[:li "This package is provided as Closure library. Check " [:a.dib.link.normal.blue {:href readme-url} "Readme"] " for usage information."]]))])
 
          [:div.cf.mb0-ns.mb2
@@ -165,7 +167,7 @@
           [:button.btn-reset.pa3-ns.pv2.ph3.dib.blue {:on-click #(swap! show-cljs-edn? not)} "cljs.edn (advanced)"]]
 
          (when @show-cljs-edn?
-           [:pre.deps.pa3 (with-out-str (pprint/pprint deps))])]))))
+           [:pre.deps.pa3.ma0.bt.b--black-20 (with-out-str (pprint/pprint deps))])]))))
 
 (defn package-list []
   (let [query @search]
