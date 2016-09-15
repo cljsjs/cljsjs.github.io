@@ -150,7 +150,7 @@
                                 [:pre
                                  "(ns some.ns\n"
                                  "  (:require ...\n"
-                                 "            " main-ns ")"]]]
+                                 "            " main-ns "))"]]]
                               (if (seq (rest provides))
                                 [:li "This package also provides " (count (rest provides)) " other namespaces, check "
                                  [:a.dib.link.normal.blue {:href readme-url :target "new"} "Readme"] " or deps.cljs for more information."])
