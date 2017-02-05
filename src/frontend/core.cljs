@@ -169,9 +169,9 @@
           [:span.pa3-ns.pv2.ph3.dib
            [:abbr.stars
             {:title (str downloads " downloads")}
-            (let [stars (inc (/ downloads (/ max-downloads 4))) ]
+            (let [stars (/ downloads (/ max-downloads 5)) ]
               (str (apply str (repeat stars "★"))
-                   (apply str (repeat (- 4 stars) "☆"))))]]
+                   (apply str (repeat (- 5 stars) "☆"))))]]
           [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href homepage :target "new"} "Project Site"]
           [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href readme-url :target "new"} "Package Readme"]
           [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href (str "https://clojars.org/" cljsjs-group "/" artifact)} "Clojars"]
