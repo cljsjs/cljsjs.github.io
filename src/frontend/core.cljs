@@ -126,6 +126,9 @@
 (defn code [& contents]
   (into [:code.blue] contents))
 
+(defn log-scale [min max n m]
+  (+ min (* (- max min) (/ (Math/log n) (Math/log m)))))
+
 (defn package [_]
   (let [expanded?      (r/atom false)
         show-cljs-edn? (r/atom false)]
@@ -169,9 +172,9 @@
           [:span.pa3-ns.pv2.ph3.dib
            [:abbr.stars
             {:title (str downloads " downloads")}
-            (let [stars (/ downloads (/ max-downloads 5)) ]
-              (str (apply str (repeat stars "★"))
-                   (apply str (repeat (- 5 stars) "☆"))))]]
+            (let [stars (log-scale 0 5 downloads max-downloads)]
+              (for [i (range 5)]
+                [:span {:key i} (if (< i stars) "★" "☆")]))]]
           [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href homepage :target "new"} "Project Site"]
           [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href readme-url :target "new"} "Package Readme"]
           [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href (str "https://clojars.org/" cljsjs-group "/" artifact)} "Clojars"]
