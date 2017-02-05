@@ -3,7 +3,7 @@
             [cljs.reader :as reader]
             [komponentit.autocomplete :as ac]
             [komponentit.highlight :as hi]
-            cljsjs.clipboard
+            [komponentit.clipboard :as clipboard]
             [cljs.pprint :as pprint]))
 
 (defonce packages (r/atom nil))
@@ -102,18 +102,14 @@
 
 (defn select-on-click-input [_ _]
   (let [copied? (r/atom nil)]
-    (r/create-class
-     {:component-did-mount
-      (fn [this]
-        (js/Clipboard. (r/dom-node this)))
-      :reagent-render
-      (fn [text query]
-        [:div.dim.pa3.bb.b--black-20
-         {:data-clipboard-text text
-          :on-click #(reset! copied? true)}
-         [:div.mv2
-          [:span.f4.code.mr1 [hi/highlight-string text query]]
-          [:span.dib.pt2.f6.black-50 (if @copied? "(copied!)" "(click to copy)")]]])})))
+    (fn [text query]
+      [:div.dim.pa3.bb.b--black-20
+       {:on-click (fn [e]
+                    (clipboard/copy-text text)
+                    (reset! copied? true))}
+       [:div.mv2
+        [:span.f4.code.mr1 [hi/highlight-string text query]]
+        [:span.dib.pt2.f6.black-50 (if @copied? "(copied!)" "(click to copy)")]]])))
 
 (defn dep-vec [artifact version]
   (str "[" cljsjs-group "/" artifact " \"" version "\"]"))
