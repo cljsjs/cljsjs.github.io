@@ -8,6 +8,7 @@
 
 (defonce packages (r/atom nil))
 (defonce search (r/atom nil))
+(defonce sort-key (r/atom :downloads))
 (defonce package-type-filter (r/atom nil))
 
 (def cljsjs-group "cljsjs")
@@ -48,24 +49,32 @@
         type-filter (if-let [x @package-type-filter]
                       (filter #(= x (:package-type %)))
                       identity)]
-    (into [] (comp search-filter type-filter) current-packages)))
+    (sort-by @sort-key (if (= :downloads @sort-key) > <) (into [] (comp search-filter type-filter) current-packages))))
 
 (defn search-input []
   (let [temp (r/atom @search)
         timeout (atom nil)]
     (fn []
-      [:input.w-100.pa3.f4
-       {:type "text"
-        :placeholder "Search ..."
-        :value @temp
-        :on-change (fn [e]
-                     (let [v (.. e -target -value)]
-                       (reset! temp v)
-                       (swap! timeout (fn [current-timeout]
-                                        (if current-timeout (js/clearTimeout current-timeout))
-                                        (js/setTimeout (fn [_]
-                                                         (reset! search (ac/default->query v)))
-                                                       300)))))}])))
+      [:div.w-100
+       [:input.w-60.pa3.f4
+        {:type "text"
+         :placeholder "Search ..."
+         :value @temp
+         :on-change (fn [e]
+                      (let [v (.. e -target -value)]
+                        (reset! temp v)
+                        (swap! timeout (fn [current-timeout]
+                                         (if current-timeout (js/clearTimeout current-timeout))
+                                         (js/setTimeout (fn [_]
+                                                          (reset! search (ac/default->query v)))
+                                                        300)))))}]
+       [:select.w-40.f4.pa3
+        {:value @sort-key
+         :on-change (fn [e]
+                      (let [v (.. e -target -value)]
+                        (reset! sort-key (keyword v))))}
+        [:option {:value "downloads"} "Downloads"]
+        [:option {:value "name"} "Name"]]])))
 
 (defn package-types []
   (let [active (or @package-type-filter :all)
@@ -120,7 +129,7 @@
 (defn package [_]
   (let [expanded?      (r/atom false)
         show-cljs-edn? (r/atom false)]
-    (fn package-render [{:keys [artifact description homepage version deps package-type]} query]
+    (fn package-render [{:keys [artifact description homepage version deps package-type downloads]} query max-downloads]
       (let [dependency-vector (dep-vec artifact version)
             provides (mapcat :provides (:foreign-libs deps))
             main-ns (-> deps :foreign-libs first :provides first)
@@ -157,6 +166,12 @@
                 :closure-lib [[:li "This package is provided as Closure library. Check " [:a.dib.link.normal.blue {:href readme-url} "Readme"] " for usage information."]]))])
 
          [:div.cf.mb0-ns.mb2
+          [:span.pa3-ns.pv2.ph3.dib
+           [:abbr.stars
+            {:title (str downloads " downloads")}
+            (let [stars (inc (/ downloads (/ max-downloads 4))) ]
+              (str (apply str (repeat stars "★"))
+                   (apply str (repeat (- 4 stars) "☆"))))]]
           [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href homepage :target "new"} "Project Site"]
           [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href readme-url :target "new"} "Package Readme"]
           [:a.pa3-ns.pv2.ph3.dib.link.normal.blue {:href (str "https://clojars.org/" cljsjs-group "/" artifact)} "Clojars"]
@@ -166,10 +181,12 @@
            [:pre.deps.pa3.ma0.bt.b--black-20 (with-out-str (pprint/pprint deps))])]))))
 
 (defn package-list []
-  (let [query @search]
+  (let [query @search
+        max-downloads (reduce max 0 (map :downloads @packages))]
     [:ul.list.pl0
      (for [pkg-info @(r/track filtered-packages)]
-       ^{:key (:artifact pkg-info)} [package pkg-info query])]))
+       ^{:key (:artifact pkg-info)}
+       [package pkg-info query max-downloads])]))
 
 (defn main []
   [:div
