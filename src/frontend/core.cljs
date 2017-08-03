@@ -163,7 +163,7 @@
                               (if (seq (rest provides))
                                 [:li "This package also provides " (count (rest provides)) " other namespaces, check "
                                  [:a.dib.link.normal.blue {:href readme-url :target "new"} "Readme"] " or deps.cljs for more information."])
-                              [:li "You can now use your newly added library by accessing it through the global Javascript namespace, e.g." [code "js/React"]
+                              [:li "You can now use your newly added library by accessing it through the global Javascript namespace, e.g. " [code "js/React"] ". "
                                "Please check the project's documentation to find out what global the library uses. "
                                [:strong "Please note: "] "You can not use " [code ":as"] " or " [code ":refer"] " with CLJSJS dependencies."]]
                 :closure-lib [[:li "This package is provided as Closure library. Check " [:a.dib.link.normal.blue {:href readme-url} "Readme"] " for usage information."]]))])
