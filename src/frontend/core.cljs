@@ -1,5 +1,6 @@
 (ns frontend.core
   (:require [reagent.core :as r]
+            [clojure.string :as str]
             [cljs.reader :as reader]
             [komponentit.autocomplete :as ac]
             [komponentit.highlight :as hi]
@@ -13,14 +14,20 @@
 
 (def cljsjs-group "cljsjs")
 
+(defn code [& contents]
+  (into [:code.blue] contents))
+
 (defn infer-type [{:keys [deps] :as lib}]
   (let [{:keys [foreign-libs libs]} deps
-        module-type (some :module-type foreign-libs)]
-    (assoc lib :package-type (cond
-                               module-type :processed-module
-                               foreign-libs :foreign-lib
-                               libs :closure-lib
-                               :else "foo?"))))
+        ; module-type (some :module-type foreign-libs)
+        ]
+    (assoc lib
+           :package-type (cond
+                           ; module-type :processed-module
+                           foreign-libs :foreign-lib
+                           libs :closure-lib
+                           :else "foo?")
+           :global-exports? (some :global-exports foreign-libs))))
 
 (defn load-packages []
   (let [req  (js/XMLHttpRequest.)]
@@ -47,7 +54,9 @@
                         (filter #(ac/query-match? term-match-fn % query))
                         identity)
         type-filter (if-let [x @package-type-filter]
-                      (filter #(= x (:package-type %)))
+                      (case x
+                        :global-exports (filter :global-exports?)
+                        (filter #(= x (:package-type %))))
                       identity)]
     (sort-by @sort-key (if (= :downloads @sort-key) > <) (into [] (comp search-filter type-filter) current-packages))))
 
@@ -83,11 +92,11 @@
              (reset! package-type-filter (if (= :all v) nil v)))]
     [:div.pa3.br.bl.bb.b--black-20.bg-near-white
      [:nav
-      [:span.mr2.b.mid-gray "Package types: "]
+      [:span.mr2.b.mid-gray "Features: "]
       (for [[k t] [[:all "All"]
                    [:foreign-lib "Foreign library"]
-                   [:closure-lib "Closure library"]
-                   [:processed-module "CommonJS, ES6, AMDjs"]]]
+                   [:global-exports [:span [code ":global-exports" ] " support"]]
+                   [:closure-lib "Closure library"]]]
         [:button.btn-reset.f6.f5-ns.dib.mr2
          {:key k
           :href "#"
@@ -95,19 +104,18 @@
           :on-click #(cb k %)}
          t])]
      (when-not (= :all active)
-       [:p.pt3.ma0.lh-copy
-        (case active
-          :foreign-lib  "Foreign libraries are normal JavaScript libraries intended for browser consumption
-                       packaged with extern files so they can be used with Closure optimized ClojureScript
-                       application. The library JavaScript code is included as is as part of the output,
-                       and Closure can't optimize the code (dead code elimination, name mangling)."
-          :closure-lib "Closure libraries are JavaScript libraries intended for use with Closure compiler.
-                      These libraries can be optimized by Closure compiler, same as Cljs code."
-          :processed-module "In future Cljs compiler can hopefully use Closure Module Processing to convert
-                           e.g. CommonJS and ES6 modules to Closure modules. This will allow Closure
-                           compiler to optimize code and we don't need to use webpack or such to package
-                           these libraries for browser."
-          nil)])]))
+       (into [:p.pt3.ma0.lh-copy]
+             (case active
+               :foreign-lib ["Foreign libraries are normal JavaScript libraries intended for browser consumption
+                             packaged with extern files so they can be used with Closure optimized ClojureScript
+                             application. The library JavaScript code is included as is as part of the output,
+                             and Closure can't optimize the code (dead code elimination, name mangling)."]
+               :closure-lib ["Closure libraries are JavaScript libraries intended for use with Closure compiler.
+                             These libraries can be optimized by Closure compiler, same as Cljs code."]
+               :global-exports ["These packages support " [:a {:href "https://clojurescript.org/news/2017-07-30-global-exports"} [code ":global-exports"]] " "
+                                "feature, which allows using " [code ":as"] ", " [code ":refer"] " with these packages, and "
+                                "refering to the functions from these libs like they were real namespaces."]
+               nil)))]))
 
 (defn select-on-click-input [_ _]
   (let [copied? (r/atom nil)]
@@ -123,19 +131,20 @@
 (defn dep-vec [artifact version]
   (str "[" cljsjs-group "/" artifact " \"" version "\"]"))
 
-(defn code [& contents]
-  (into [:code.blue] contents))
-
 (defn log-scale [min max n m]
   (+ min (* (- max min) (/ (Math/log n) (Math/log m)))))
 
 (defn package [_]
   (let [expanded?      (r/atom false)
         show-cljs-edn? (r/atom false)]
-    (fn package-render [{:keys [artifact description homepage version deps package-type downloads]} query max-downloads]
+    (fn package-render [{:keys [artifact description homepage version deps package-type global-exports? downloads]} query max-downloads]
       (let [dependency-vector (dep-vec artifact version)
             provides (mapcat :provides (:foreign-libs deps))
-            main-ns (-> deps :foreign-libs first :provides first)
+            main-ns (or (first (filter #(str/starts-with? % "cljsjs.") provides))
+                        (->> deps :foreign-libs first :provides first) )
+            global-exports-ns (if global-exports?
+                                (or (first (remove #(str/starts-with? % "cljsjs.") provides))
+                                    main-ns))
             readme-url (str "https://github.com/cljsjs/packages/tree/master/" artifact)]
         [:li.ba.mb3.b--black-20.br1
          {:key artifact}
@@ -159,13 +168,22 @@
                                [code
                                 [:pre
                                  "(ns your.namespace\n"
-                                 "  (:require [" main-ns "]))"]]]
+                                 "  (:require [" main-ns "]))\n"
+                                 "\n"
+                                 "(js/GlobalName.someFunction)"]]
+                               "You can now use your newly added library by accessing it through the global Javascript namespace, e.g. " [code "js/React"] ". "
+                               "Please check the project's documentation to find out what global the library uses."]
+                              (if global-exports?
+                                [:li "This package also supports " [:a {:href "https://clojurescript.org/news/2017-07-30-global-exports"} [code ":global-exports"]] ", so you can use it like it was a real namespace: "
+                                 [code
+                                  [:pre
+                                   "(ns your.namespace\n"
+                                   "  (:require [" global-exports-ns" :as " global-exports-ns "]))\n"
+                                   "\n"
+                                   "(" global-exports-ns "/someFunction)"]]])
                               (if (seq (rest provides))
                                 [:li "This package also provides " (count (rest provides)) " other namespaces, check "
-                                 [:a.dib.link.normal.blue {:href readme-url :target "new"} "Readme"] " or deps.cljs for more information."])
-                              [:li "You can now use your newly added library by accessing it through the global Javascript namespace, e.g. " [code "js/React"] ". "
-                               "Please check the project's documentation to find out what global the library uses. "
-                               [:strong "Please note: "] "You can not use " [code ":as"] " or " [code ":refer"] " with CLJSJS dependencies."]]
+                                 [:a.dib.link.normal.blue {:href readme-url :target "new"} "Readme"] " or deps.cljs for more information."])]
                 :closure-lib [[:li "This package is provided as Closure library. Check " [:a.dib.link.normal.blue {:href readme-url} "Readme"] " for usage information."]]))])
 
          [:div.cf.mb0-ns.mb2
